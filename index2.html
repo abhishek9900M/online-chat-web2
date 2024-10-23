@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Rooms</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        /* Add your styles here */
+
+        h2{
+            background-color: burlywood;
+            border: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+    </style>
+</head>
+<body>
+
+<div>
+    <h2>Join a Chat Room</h2>
+    <input type="text" id="roomInput" placeholder="Room Name">
+    <button id="joinButton">Join</button>
+</div>
+
+<div>
+    <h2>Chat</h2>
+    <div id="messages"></div>
+    <input type="text" id="messageInput" placeholder="Type your message">
+    <button id="sendButton">Send</button>
+</div>
+
+<script>
+    const socket = io();
+
+    document.getElementById('joinButton').onclick = () => {
+        const room = document.getElementById('roomInput').value;
+        socket.emit('joinRoom', room);
+        document.getElementById('roomInput').value = '';
+    };
+
+    document.getElementById('sendButton').onclick = () => {
+        const room = document.getElementById('roomInput').value;
+        const message = document.getElementById('messageInput').value;
+        socket.emit('chatMessage', { room, message });
+        document.getElementById('messageInput').value = '';
+    };
+
+    socket.on('message', (message) => {
+        const messagesDiv = document.getElementById('messages');
+        messagesDiv.innerHTML += `<p>${message}</p>`;
+    });
+</script>
+
+</body>
+</html>
